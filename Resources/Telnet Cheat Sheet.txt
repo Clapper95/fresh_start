@@ -14,7 +14,7 @@ SFTP			22			File Transfer	Encrypted
 SSH				22			Remote FT 		Encrypted
 SMTP			25			EMAIL(MTA)		Cleartext
 SMTPS			465			EMAIL(MTA)		Encrypted
-Telnet			23			Remote Access	Cleartext
+Telnet		23			Remote Access	Cleartext
 
 
 To access these, you need to execute these commands
