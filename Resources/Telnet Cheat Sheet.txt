@@ -11,10 +11,10 @@ IMAPS			993			EMAIL(MDA)		Encrypted
 POP3			110			EMAIL(MDA)		Cleartext
 POP3S			995			EMAIL(MDA)		Encrypted
 SFTP			22			File Transfer	Encrypted
-SSH				    22			Remote FT 		Encrypted
+SSH				  22			Remote FT 		Encrypted
 SMTP			25			EMAIL(MTA)		Cleartext
 SMTPS			465			EMAIL(MTA)		Encrypted
-Telnet		    23			Remote Access	Cleartext
+Telnet		      23			Remote Access	Cleartext
 
 
 To access these, you need to execute these commands
