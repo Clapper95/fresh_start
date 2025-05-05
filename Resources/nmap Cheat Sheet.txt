@@ -1,0 +1,81 @@
+NMAP Usage:
+This will show you the NMAP options and when to use them
+
+
+Live Host Discovery:
+	Options:
+		-n = No DNS Lookup
+		-R = Reverse-DNS Lookup for all hosts
+		-sn = host discovery only
+	
+	ARP Scan 'sudo nmap -PR -sn IP/PORT'
+	ICMP Echo Scan 'sudo nmap -PE -sn IP/PORT'
+	ICMP Timestamp Scan 'sudo nmap -PP -sn IP/PORT'
+	ICMP Address Mask Scan 'sudo nmap -PM -sn IP/PORT'
+	TCP SYN Ping Scan 'sudo nmap -PS22,80,443 -sn IP/PORT'
+	TCP ACK Ping Scan 'sudo nmap -PA22,80,443 -sn IP/PORT' 
+	UDP Ping Scan 'sudo nmap -PU54,161,162 -sn IP/PORT'
+
+Basic Port Scan:
+	Options:
+		-p- = All Ports
+		-p#-# = Scan certain ports
+		-F = Scan 100 most common ports
+		-r = Scan ports in consecutive order
+		-T<0-5> = The scan rate
+			paranoid (0)
+			sneaky (1)
+			polite (2)
+			normal (3)
+			aggressive (4)
+			insane (5)
+		--max-rate # = rate <= # of packets/second
+		--min-rate # = rate >= # of packets/second
+		--min-parallelism = # = at least # of probes in parallel (Meaning these will run at the same time)
+
+	TCP Connect Scan 'nmap -sT <IP>'
+	TCP SYN Scan 'nmap -sS <IP>'
+	UDP Scan 'nmap -sU <IP>'
+
+Advanced Port Scan:
+	Options:
+		--reason = explains how nmap made the conclusion
+		-v = verbose
+		-vv = very verbose
+		-d = debugging
+		-dd = more details for debugging
+		--source-port = specifies port number
+		--data-length = # = append random data to reach given length
+
+	TCP Null Scan 'nmap -sN IP'
+	TCP Fin Scan 'nmap -sF IP'
+	TCP Xmas Scan 'nmap -sX IP'
+	TCP Maimon Scan 'nmap -sM IP'
+	TCP ACK Scan 'nmap -sA IP'
+	TCP Window Scan 'nmap -sW IP'
+	Custom TCP Scan 'nmap --scanflags < 'URG' 'ACK' 'PSH' 'RST' 'SYN' 'FIN' > IP'
+	Spoofed Source IP 'nmap -S <SPOOFED IP> IP'
+	Spoofed MAC Address '--spoof-mac <Spoofed MAC>'
+	Decoy Scan 'nmap -D <Decoy IP>,ME IP'
+	Idle Scan 'nmap -sI <IDLE IP> IP'
+	Fragment IP Into 8 bytes = -f
+	Fragment IP Into 16 bytes = -ff
+
+Post Port Scans:
+	Options:
+		-sV = determine service/version info on open ports
+		-sV --version-light = tries the most likely probes (2)
+		-sV --version-all = tries all available probes(9)
+		-O = detects OS
+		--traceroute = runs traceroute to target
+		--script=SCRIPTS = nmap scripts to run
+		-sC / --script=default = runs default scripts
+		-A = == -sV -O -sC --traceroute
+		-oN = saves output in normal format
+		-oG = same but grepable format
+		-oX = same but XML format
+		-oA = saves in all above listed formats
+	 
+	 Run these as "nmap -<option> IP"
+	 If you plan on saving then run as "nmap -<option> -<o*> <filename> IP"
+	 
