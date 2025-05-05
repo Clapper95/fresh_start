@@ -3,10 +3,17 @@ Telnet Cheat Sheet
 Protocol	TCP Port 	Application/s 	Data Sec
 
 FTP 			21			File Transfer	Cleartext
+FTPS			990			File Transfer 	Encrypted
 HTTP			80			WWW				Cleartext
+HTTPS			443			WWW				Encrypted
 IMAP			143 		EMAIL(MDA)		Cleartext
+IMAPS			993			EMAIL(MDA)		Encrypted
 POP3			110			EMAIL(MDA)		Cleartext
+POP3S			995			EMAIL(MDA)		Encrypted
+SFTP			22			File Transfer	Encrypted
+SSH				22			Remote FT 		Encrypted
 SMTP			25			EMAIL(MTA)		Cleartext
+SMTPS			465			EMAIL(MTA)		Encrypted
 Telnet			23			Remote Access	Cleartext
 
 
@@ -27,4 +34,4 @@ ftp <Target IP> <Target Port>
 Then enter in your credentials like you would with telnet
 switch to ascii with ("Ascii")
 Then GET filename.* 
-It will then download to your client in the directory you have selected in terminal.
+It will then download to your client in the directory you have selected in terminal\
